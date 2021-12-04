@@ -1,3 +1,12 @@
+<?php
+session_start();
+if (isset($_COOKIE["logincookie"])) {
+  $login_session_duration = $_COOKIE["logincookie"];
+} else {
+  $login_session_duration = 3600; // 1 hour
+}
+?>
+
 <!DOCTYPE html>
 
 <html>
@@ -5,7 +14,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title></title>
+  <title>Hotel XYZ</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap -->
@@ -22,7 +31,7 @@
       <div class="container" id="header-content">
         <h1 class="display-3">Hotel XYZ!</h1>
         <p>Willkommen in unserem Hotel...</p>
-        <p><a class="btn btn-light" href="./hilfe.php" role="button">Infos zum Aufenthalt »</a></p>
+        <p><a class="btn btn-light" href="./index.php?menu=hilfe" role="button">Infos zum Aufenthalt »</a></p>
       </div>
     </div>
   </div>
@@ -38,43 +47,44 @@
       </button>
       <div class="collapse navbar-collapse" id="mynavbar">
         <ul class="navbar-nav me-auto">
-          <?php
-          session_start();
-          if (empty($_SESSION["username"])) {
-            echo '
-              <li class="nav-item">
-                  <a class="nav-link" href="./registrierung.php">Registrierung</a>
-              </li>';
-          } else {
-            echo '
-              <li class="nav-item">
-                  <a class="nav-link" href="./news.php">News</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="./hilfe.php">Hilfe</a>
-              </li>
-              <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Service Ticket</a>
-                  <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="./serviceTicketFormular.php">erstellen</a></li>
-                      <li><a class="dropdown-item" href="#">bearbeiten</a></li>
-                  </ul>
-              </li>
-            ';
-          }
-          ?>
+
+          <li class="nav-item">
+            <a class="nav-link" href="./index.php?menu=news">News</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./index.php?menu=hilfe">Hilfe</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Service Ticket</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="./index.php?menu=serviceTicketFormular">erstellen</a></li>
+              <li><a class="dropdown-item" href="#">bearbeiten</a></li>
+            </ul>
+          </li>
         </ul>
 
         <div class="d-flex">
+          <!-- Entweder wir lassen die Gästerregistrierung hier oder man kann Sie nur übers Login-Formular auffinden -->
           <?php
           if (empty($_SESSION["username"])) {
             echo '
-              <a class="navbar-brand" href="./login.php">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                  <a class="nav-link" href="./index.php?menu=registrierung">G&auml;sterregistrierung</a>
+              </li>
+            </ul>';
+          }
+          ?>
+          <!-- Login oder Logout Button -->
+          <?php
+          if (empty($_SESSION["username"])) {
+            echo '
+              <a class="navbar-brand" href="./index.php?menu=login">
                   <i class="fas fa-sign-in-alt fa-lg text-muted"></i>
               </a>';
           } else {
             echo '
-              <a class="navbar-brand" href="./logout.php">
+              <a class="navbar-brand" href="./index.php?menu=logout">
                   <i class="fas fa-sign-out-alt fa-lg text-muted"></i>
               </a>';
           }
@@ -83,6 +93,37 @@
       </div>
     </div>
   </nav>
+
+  <header>
+
+  </header>
+
+  <main>
+    <?php
+    $menu = @$_GET['menu'];
+    // All PHP-Pages are included using "include"
+    switch ($menu) {
+      case 'login':
+        include 'sites/login.php';
+        break;
+      case 'assignments':
+        include 'sites/assignments.php';
+        break;
+      case 'logout':
+        include 'sites/logout.php';
+        break;
+      case 'upload':
+        include 'sites/upload.php';
+        break;
+      case 'download':
+        include 'sites/download.php';
+        break;
+      case 'sessionexpired':
+        include 'sites/sessionexpired.php';
+        break;
+    }
+    ?>
+  </main>
 
 
 
